@@ -9,7 +9,7 @@ on:
       - '*'
 
 jobs:
-  build:
+  build-and-run:
     runs-on: ubuntu-latest
 
     steps:
@@ -25,7 +25,7 @@ jobs:
           java-version: '11'
 
       - name: Run Java code
-        run: 
+        run: |
           cd openai-code-review-sdk/src/main/java
           javac edu/xyf/middleware/sdk/OpenAICodeReview.java
           java edu.xyf.middleware.sdk.OpenAICodeReview
