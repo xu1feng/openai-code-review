@@ -103,7 +103,7 @@
                     <archive>
                         <manifest>
                             <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-                            <mainClass>plus.gaga.middleware.sdk.OpenAiCodeReview</mainClass>
+                            <mainClass>edu.xyf.middleware.sdk.OpenAICodeReview</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
