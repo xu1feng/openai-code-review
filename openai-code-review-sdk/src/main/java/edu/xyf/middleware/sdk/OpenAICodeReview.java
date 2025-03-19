@@ -35,26 +35,26 @@ public class OpenAICodeReview {
 
         Process process = processBuilder.start();
 
-        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+        BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
         String line;
 
         StringBuilder diffCode = new StringBuilder();
-        while ((line = bufferedReader.readLine()) != null) {
+        while ((line = reader.readLine()) != null) {
             diffCode.append(line);
         }
 
         int exitCode = process.waitFor();
-        System.out.println("ExitCode with code: " + exitCode);
+        System.out.println("Exited with code:" + exitCode);
 
-        System.out.println("diff code: " + diffCode.toString());
+        System.out.println("diff code：" + diffCode.toString());
 
         // 2. chatglm 代码评审
         String log = codeReview(diffCode.toString());
-        System.out.println("code review: " + log);
+        System.out.println("code review：" + log);
 
         // 3. 写入评审日志
         String logUrl = writeLog(token, log);
-        System.out.println("writeLog: " + logUrl);
+        System.out.println("writeLog：" + logUrl);
     }
 
     private static String codeReview(String diffCode) throws Exception {
@@ -108,7 +108,6 @@ public class OpenAICodeReview {
     }
 
     private static String writeLog(String token, String log) throws Exception {
-
         Git git = Git.cloneRepository()
                 .setURI("https://github.com/xu1feng/openai-code-review-log.git")
                 .setDirectory(new File("repo"))
@@ -116,20 +115,22 @@ public class OpenAICodeReview {
                 .call();
 
         String dateFolderName = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
-        File dataFolder = new File("repo/" + dateFolderName);
-        if (!dataFolder.exists()) {
-            dataFolder.mkdirs();
+        File dateFolder = new File("repo/" + dateFolderName);
+        if (!dateFolder.exists()) {
+            dateFolder.mkdirs();
         }
 
         String fileName = generateRandomString(12) + ".md";
-        File newFile = new File(dataFolder, fileName);
+        File newFile = new File(dateFolder, fileName);
         try (FileWriter writer = new FileWriter(newFile)) {
             writer.write(log);
         }
 
         git.add().addFilepattern(dateFolderName + "/" + fileName).call();
-        git.commit().setMessage("Add new file").call();
-        git.push().setCredentialsProvider(new UsernamePasswordCredentialsProvider(token, ""));
+        git.commit().setMessage("Add new file via GitHub Actions").call();
+        git.push().setCredentialsProvider(new UsernamePasswordCredentialsProvider(token, "")).call();
+
+        System.out.println("Changes have been pushed to the repository.");
 
         return "https://github.com/xu1feng/openai-code-review-log/blob/master/" + dateFolderName + "/" + fileName;
     }
