@@ -4,6 +4,7 @@ package edu.xyf.middleware.sdk.test;
 import com.alibaba.fastjson2.JSON;
 import edu.xyf.middleware.sdk.domain.model.ChatCompletionSyncResponse;
 import edu.xyf.middleware.sdk.types.utils.BearerTokenUtils;
+import edu.xyf.middleware.sdk.types.utils.WXAccessTokenUtils;
 import org.junit.Test;
 
 import java.io.BufferedReader;
@@ -14,6 +15,9 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Scanner;
 
 public class ApiTest {
 
@@ -71,6 +75,89 @@ public class ApiTest {
         ChatCompletionSyncResponse response = JSON.parseObject(content.toString(), ChatCompletionSyncResponse.class);
         System.out.println(response.getChoices().get(0).getMessage().getContent());
 
+    }
+
+    @Test
+    public void test_weixin() {
+        String accessToken = WXAccessTokenUtils.getAccessToken();
+        System.out.println(accessToken);
+
+        Message message = new Message();
+        message.put("project", "big-market");
+        message.put("review", "feat: 新加功能");
+
+        String url = String.format("https://api.weixin.qq.com/cgi-bin/message/template/send?access_token=%s", accessToken);
+        sendPostRequest(url, JSON.toJSONString(message));
+    }
+
+    private static void sendPostRequest(String urlString, String jsonBody) {
+        try {
+            URL url = new URL(urlString);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("POST");
+            conn.setRequestProperty("Content-Type", "application/json; utf-8");
+            conn.setRequestProperty("Accept", "application/json");
+            conn.setDoOutput(true);
+
+            try (OutputStream os = conn.getOutputStream()) {
+                byte[] input = jsonBody.getBytes(StandardCharsets.UTF_8);
+                os.write(input, 0, input.length);
+            }
+
+            try (Scanner scanner = new Scanner(conn.getInputStream(), StandardCharsets.UTF_8.name())) {
+                String response = scanner.useDelimiter("\\A").next();
+                System.out.println(response);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static class Message {
+        private String touser = "ov-g46fQie9ar7VVZ_OGaNZg7Ow0";
+        private String template_id = "sCZ8ZBVHI6lmkfGxi7iUKDq4IraEhVBqrSLF_8x9qIQ";
+        private String url = "https://github.com/xu1feng/openai-code-review-log/blob/master/2025-03-19/7trW82oRoG0s.md";
+        private Map<String, Map<String, String>> data = new HashMap<>();
+
+        public void put(String key, String value) {
+            data.put(key, new HashMap<String, String>() {
+                {
+                    put("value", value);
+                }
+            });
+        }
+
+        public String getTouser() {
+            return touser;
+        }
+
+        public void setTouser(String touser) {
+            this.touser = touser;
+        }
+
+        public String getTemplate_id() {
+            return template_id;
+        }
+
+        public void setTemplate_id(String template_id) {
+            this.template_id = template_id;
+        }
+
+        public String getUrl() {
+            return url;
+        }
+
+        public void setUrl(String url) {
+            this.url = url;
+        }
+
+        public Map<String, Map<String, String>> getData() {
+            return data;
+        }
+
+        public void setData(Map<String, Map<String, String>> data) {
+            this.data = data;
+        }
     }
 
 }
