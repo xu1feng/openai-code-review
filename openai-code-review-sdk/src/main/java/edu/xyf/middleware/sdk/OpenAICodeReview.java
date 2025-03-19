@@ -10,6 +10,11 @@ import edu.xyf.middleware.sdk.types.utils.BearerTokenUtils;
 import edu.xyf.middleware.sdk.types.utils.WXAccessTokenUtils;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
+import org.eclipse.jgit.lib.ObjectId;
+import org.eclipse.jgit.lib.Repository;
+import org.eclipse.jgit.revwalk.RevCommit;
+import org.eclipse.jgit.revwalk.RevWalk;
+import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 
 import java.io.*;
@@ -68,13 +73,55 @@ public class OpenAICodeReview {
         String accessToken = WXAccessTokenUtils.getAccessToken();
         System.out.println(accessToken);
 
-        Message message = new Message();
-        message.put("project", "OpenAI代码评审");
-        message.put("review", logUrl);
-        message.setUrl(logUrl);
+        // 修改模板消息内容
 
-        String url = String.format("https://api.weixin.qq.com/cgi-bin/message/template/send?access_token=%s", accessToken);
-        sendPostRequest(url, JSON.toJSONString(message));
+        try {
+            // 1. 打开Git仓库
+            Repository repository = new FileRepositoryBuilder()
+                    .setGitDir(new File("https://github.com/xu1feng/openai-code-review.git")) // 指向.git目录
+                    .build();
+            // 2. 获取仓库名称（从远程URL提取）
+            String repoName = extractRepoName(repository);
+            // 3. 获取当前分支名称
+            String branchName = repository.getBranch();
+            // 4. 获取最新提交信息
+            ObjectId head = repository.resolve("HEAD");
+            try (RevWalk walk = new RevWalk(repository)) {
+                RevCommit commit = walk.parseCommit(head);
+                String commitAuthor = commit.getAuthorIdent().getName();
+                String commitMessage = commit.getFullMessage();
+                // 输出结果（替换为你的模板填充逻辑）
+                System.out.println("repo_name: " + repoName);
+                System.out.println("branch_name: " + branchName);
+                System.out.println("commit_author: " + commitAuthor);
+                System.out.println("commit_message: " + commitMessage);
+
+                Message message = new Message();
+                message.put("repo_name", repoName);
+                message.put("branch_name", branchName);
+                message.put("commit_author", commitAuthor);
+                message.put("commit_message", commitMessage);
+                message.put("review", logUrl);
+                message.setUrl(logUrl);
+
+                String url = String.format("https://api.weixin.qq.com/cgi-bin/message/template/send?access_token=%s", accessToken);
+                sendPostRequest(url, JSON.toJSONString(message));
+            }
+
+            repository.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static String extractRepoName(Repository repository) {
+        String remoteUrl = repository.getConfig().getString("remote", "github", "url");
+        if (remoteUrl == null) return "unknown";
+
+        // 处理不同URL格式（https/ssh）
+        String[] parts = remoteUrl.split("[:/]");
+        String lastPart = parts[parts.length - 1];
+        return lastPart.replace(".git", "");
     }
 
     private static void sendPostRequest(String urlString, String jsonBody) {
