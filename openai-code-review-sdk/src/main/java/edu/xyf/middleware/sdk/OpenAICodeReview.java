@@ -131,7 +131,7 @@ public class OpenAICodeReview {
         git.commit().setMessage("Add new file").call();
         git.push().setCredentialsProvider(new UsernamePasswordCredentialsProvider(token, ""));
 
-        return "https://github.com/xu1feng/openai-code-review-log/blob/master" + dateFolderName + "/" + fileName;
+        return "https://github.com/xu1feng/openai-code-review-log/blob/master/" + dateFolderName + "/" + fileName;
     }
 
     private static String generateRandomString(int length) {
