@@ -1,8 +1,8 @@
-package edu.xyf.middleware.sdk.domain.model;
+package edu.xyf.middleware.sdk.infrastructure.openai.dto;
 
 import java.util.List;
 
-public class ChatCompletionSyncResponse {
+public class ChatCompletionSyncResponseDTO {
 
     private List<Choice> choices;
 

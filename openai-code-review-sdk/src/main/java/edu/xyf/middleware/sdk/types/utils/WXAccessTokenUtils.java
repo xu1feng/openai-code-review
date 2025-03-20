@@ -7,19 +7,18 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-/**
- * @author Xuyifeng
- * @description
- * @date 2025/3/19 20:36
- */
-
 public class WXAccessTokenUtils {
-    private static final String APPID = "wxc16ffef8ada4e8e2";
-    private static final String SECRET = "7e23cb0541935a6f040127df737858fe";
+
+    private static final String APPID = "wx5a228ff69e28a91f";
+    private static final String SECRET = "0bea03aa1310bac050aae79dd8703928";
     private static final String GRANT_TYPE = "client_credential";
     private static final String URL_TEMPLATE = "https://api.weixin.qq.com/cgi-bin/token?grant_type=%s&appid=%s&secret=%s";
 
     public static String getAccessToken() {
+        return getAccessToken(APPID, SECRET);
+    }
+
+    public static String getAccessToken(String APPID, String SECRET) {
         try {
             String urlString = String.format(URL_TEMPLATE, GRANT_TYPE, APPID, SECRET);
             URL url = new URL(urlString);
@@ -75,5 +74,6 @@ public class WXAccessTokenUtils {
             this.expires_in = expires_in;
         }
     }
+
 
 }

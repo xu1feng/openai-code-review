@@ -2,7 +2,7 @@ package edu.xyf.middleware.sdk.test;
 
 
 import com.alibaba.fastjson2.JSON;
-import edu.xyf.middleware.sdk.domain.model.ChatCompletionSyncResponse;
+import edu.xyf.middleware.sdk.infrastructure.openai.dto.ChatCompletionSyncResponseDTO;
 import edu.xyf.middleware.sdk.types.utils.BearerTokenUtils;
 import edu.xyf.middleware.sdk.types.utils.WXAccessTokenUtils;
 import org.junit.Test;
@@ -12,7 +12,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
@@ -72,7 +71,7 @@ public class ApiTest {
         in.close();
         connection.disconnect();
 
-        ChatCompletionSyncResponse response = JSON.parseObject(content.toString(), ChatCompletionSyncResponse.class);
+        ChatCompletionSyncResponseDTO response = JSON.parseObject(content.toString(), ChatCompletionSyncResponseDTO.class);
         System.out.println(response.getChoices().get(0).getMessage().getContent());
 
     }

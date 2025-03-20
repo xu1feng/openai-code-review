@@ -1,8 +1,10 @@
-package edu.xyf.middleware.sdk.domain.model;
+package edu.xyf.middleware.sdk.infrastructure.openai.dto;
+
+import edu.xyf.middleware.sdk.domain.model.Model;
 
 import java.util.List;
 
-public class ChatCompletionRequest {
+public class ChatCompletionRequestDTO {
 
     private String model = Model.GLM_4_FLASH.getCode();
     private List<Prompt> messages;
