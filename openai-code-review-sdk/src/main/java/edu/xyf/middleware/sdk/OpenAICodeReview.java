@@ -62,7 +62,7 @@ public class OpenAICodeReview {
     }
 
     private static String getEnv(String key) {
-        String value = System.getenv("GITHUB_TOKEN");
+        String value = System.getenv(key);
         if (null == value || value.isEmpty()) {
             throw new RuntimeException("token is null");
         }
