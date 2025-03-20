@@ -39,12 +39,11 @@ public class OpenAICodeReview {
                 getEnv("COMMIT_PROJECT"),
                 getEnv("COMMIT_BRANCH"),
                 getEnv("COMMIT_AUTHOR"),
-                getEnv("COMMIT_MESSAGE"),
-                getEnv("REVIEW")
+                getEnv("COMMIT_MESSAGE")
         );
 
         /**
-         * ⚙️项目：{{repo_name.DATA}} 💡分支：{{branch_name.DATA}} ✏️作者：{{commit_author.DATA}} 📝说明：{{commit_message.DATA}} 📒评审内容：{{review.DATA}}
+         * ⚙️项目：{{repo_name.DATA}} 💡分支：{{branch_name.DATA}} ✏️作者：{{commit_author.DATA}} 📝说明：{{commit_message.DATA}}
          */
         WeiXin weiXin = new WeiXin(
                 getEnv("WEIXIN_APPID"),

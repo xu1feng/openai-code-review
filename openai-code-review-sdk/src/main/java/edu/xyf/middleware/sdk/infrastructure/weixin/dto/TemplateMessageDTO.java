@@ -40,7 +40,6 @@ public class TemplateMessageDTO {
         BRANCH_NAME("branch_name","分支名称"),
         COMMIT_AUTHOR("commit_author","提交者"),
         COMMIT_MESSAGE("commit_message","提交信息"),
-        REVIEW("review", "评审信息"),
         ;
 
         private String code;

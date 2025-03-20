@@ -28,16 +28,13 @@ public class GitCommand {
 
     private final String message;
 
-    private final String review;
-
-    public GitCommand(String githubReviewLogUri, String githubToken, String project, String branch, String author, String message, String review) {
+    public GitCommand(String githubReviewLogUri, String githubToken, String project, String branch, String author, String message) {
         this.githubReviewLogUri = githubReviewLogUri;
         this.githubToken = githubToken;
         this.project = project;
         this.branch = branch;
         this.author = author;
         this.message = message;
-        this.review = review;
     }
 
     public String diff() throws Exception {
@@ -114,10 +111,6 @@ public class GitCommand {
 
     public String getMessage() {
         return message;
-    }
-
-    public String getReview() {
-        return review;
     }
 
 }
